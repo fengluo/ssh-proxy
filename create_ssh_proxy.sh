@@ -27,7 +27,7 @@ if [ "$port" = "" ]; then
 	port="7070"
 fi
 
-cat>>ssh-proxy.sh <<EOF
+cat>>/usr/bin/ssh-proxy.sh <<EOF
 #! /bin/bash
 auto_login_ssh () {
     expect -c "set timeout -1;
@@ -47,4 +47,27 @@ auto_login_ssh () {
  
 auto_login_ssh $password $login_name@$host
 EOF
-chmod 755 ssh-proxy.sh
+chmod 755 /usr/bin/ssh-proxy.sh
+
+cat>>~/Library/LaunchAgents/com.hearrain.ssh-proxy.plist <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.hearrain.ssh-proxy.plist</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/ssh-proxy</string>
+    </array>
+    <key>KeepAlive</key>
+    <false/>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>StandardErrorPath</key>
+    <string>/tmp/ssh-proxy.err</string>
+    <key>StandardOutPath</key>
+    <string>/tmp/ssh-proxy.out</string>
+</dict>
+</plist>
+EOF
